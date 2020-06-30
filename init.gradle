@@ -1,0 +1,10 @@
+// Split args if --- is present
+// Copy this is script to ~/.gradle/init.gradle to automatically run with every task
+gradle.startParameter.getTaskRequests().forEach {
+    gradle.ext.appArgs = []
+    def index = it.getArgs().indexOf('---')
+    if (index > -1) {
+        gradle.ext.appArgs += it.getArgs().drop(index + 1)
+        it.getArgs().subList(index, it.getArgs().size()).clear()
+    }
+}
