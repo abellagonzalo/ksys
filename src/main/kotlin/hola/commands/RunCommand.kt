@@ -1,12 +1,12 @@
 package hola.commands
 
-import hola.ScenarioClassScanner
 import hola.ScenarioRunner
+import hola.services.ScenarioInstantiator
 import picocli.CommandLine.Command
 import picocli.CommandLine.Parameters
 
 @Command(name = "run")
-class RunCommand(scanner: ScenarioClassScanner) : BaseCommand(scanner) {
+class RunCommand(scenarioInstantiator: ScenarioInstantiator) : BaseCommand(scenarioInstantiator) {
 
     @Parameters(index = "0", defaultValue = "all")
     var filter: String = ""

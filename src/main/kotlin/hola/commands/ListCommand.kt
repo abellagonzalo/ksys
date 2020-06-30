@@ -1,13 +1,13 @@
 package hola.commands
 
-import hola.ScenarioClassScanner
 import hola.ScenarioInstance
+import hola.services.ScenarioInstantiator
 import picocli.CommandLine.Command
 
 // TODO - Add support for * wildcard
 // TODO - Add support for regex
 @Command(name = "list")
-class ListCommand(scanner: ScenarioClassScanner) : BaseCommand(scanner) {
+class ListCommand(scenarioInstantiator: ScenarioInstantiator) : BaseCommand(scenarioInstantiator) {
     override fun call(): Int {
         ListPrinter().print(scenariosGrouped)
         return 0

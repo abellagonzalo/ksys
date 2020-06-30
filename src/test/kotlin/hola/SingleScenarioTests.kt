@@ -1,7 +1,6 @@
 package hola
 
 import org.junit.jupiter.api.Test
-import kotlin.reflect.KClass
 
 class Scenario1 : Scenario() {
     override val id: String = "scenario_001"
@@ -25,8 +24,7 @@ class Scenario1 : Scenario() {
 class SingleScenarioTests {
     @Test
     fun first() {
-        findAllScenariosClasses = { listOf(Scenario1::class) }
-        ksys("list", providers = defaultProviders + mapOf(
+        ksys("list", providers = defaultServices + mapOf(
             ScenarioClassScanner::class.java to {
                 object : ScenarioClassScanner {
                     override fun findAll() = listOf(Scenario1::class)

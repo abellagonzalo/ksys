@@ -1,14 +1,14 @@
 package hola.commands
 
-import hola.ScenarioClassScanner
 import hola.ScenarioInstance
+import hola.services.ScenarioInstantiator
 import picocli.CommandLine.Command
 import picocli.CommandLine.Parameters
 
 // TODO - Add support for * wildcard
 // TODO - Add support for regex
 @Command(name = "show")
-class ShowCommand(scanner: ScenarioClassScanner) : BaseCommand(scanner) {
+class ShowCommand(scenarioInstantiator: ScenarioInstantiator) : BaseCommand(scenarioInstantiator) {
 
     @Parameters(index = "0")
     var filter: String = ""

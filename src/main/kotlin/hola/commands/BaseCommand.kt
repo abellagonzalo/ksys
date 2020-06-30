@@ -1,10 +1,10 @@
 package hola.commands
 
-import hola.ScenarioClassScanner
 import hola.ScenarioInstance
-import hola.groupScenarioInstances
+import hola.services.ScenarioInstantiator
 import java.util.concurrent.Callable
 
-abstract class BaseCommand(private val scanner: ScenarioClassScanner) : Callable<Int> {
-    protected val scenariosGrouped: Map<String, List<ScenarioInstance>> by lazy { groupScenarioInstances(scanner.findAll()) }
+abstract class BaseCommand(private val scenarioInstantiator: ScenarioInstantiator) : Callable<Int> {
+    protected val scenariosGrouped: Map<String, List<ScenarioInstance>>
+            by lazy { scenarioInstantiator.instantiateAll() }
 }
