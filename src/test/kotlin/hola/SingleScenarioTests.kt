@@ -24,12 +24,6 @@ class Scenario1 : Scenario() {
 class SingleScenarioTests {
     @Test
     fun first() {
-        ksys("list", providers = defaultServices + mapOf(
-            ScenarioClassScanner::class.java to {
-                object : ScenarioClassScanner {
-                    override fun findAll() = listOf(Scenario1::class)
-                }
-            }
-        ))
+        ksys("list", providers = withScenarios(Scenario1::class))
     }
 }

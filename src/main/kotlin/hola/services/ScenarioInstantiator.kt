@@ -11,7 +11,7 @@ class ScenarioInstantiator(private val scanner: ScenarioClassScanner) {
         return groupScenarioInstances(all)
     }
 
-    private fun groupScenarioInstances(all: List<KClass<*>> = findAllScenariosClasses()): Map<String, List<ScenarioInstance>> {
+    private fun groupScenarioInstances(all: List<KClass<*>>): Map<String, List<ScenarioInstance>> {
         val singleScenarioInstances = all
             .filter { it.isFinal && it.isSubclassOf(Scenario::class) }
             .filterIsInstance<KClass<Scenario>>()
