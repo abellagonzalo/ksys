@@ -3,6 +3,10 @@ package hola
 import hola.SharedScenario1.Scenario3
 import hola.SharedScenario1.Scenario4
 import hola.SharedScenario2.Scenario5
+import hola.scenarios.ParamScenario1
+import hola.scenarios.ParamScenario2
+import hola.scenarios.Scenario
+import hola.scenarios.SharedScenario
 import org.junit.jupiter.api.Test
 
 class Scenario1 : Scenario() {

@@ -1,5 +1,10 @@
 package hola
 
+import hola.scenarios.BaseScenario
+import hola.scenarios.ParamScenario
+import hola.scenarios.Scenario
+import hola.scenarios.SharedScenario
+
 enum class TestOutcome {
     NOT_VERIFIED, PASSED, FAILED, SKIPPED
 }

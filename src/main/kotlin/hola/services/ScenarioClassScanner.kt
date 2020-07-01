@@ -1,7 +1,7 @@
 package hola.services
 
-import hola.ParamScenario
-import hola.Scenario
+import hola.scenarios.ParamScenario
+import hola.scenarios.Scenario
 import org.reflections.Reflections
 import org.reflections.scanners.SubTypesScanner
 import kotlin.reflect.KClass

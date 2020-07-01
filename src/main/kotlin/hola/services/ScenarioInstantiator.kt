@@ -1,6 +1,9 @@
 package hola.services
 
 import hola.*
+import hola.scenarios.ParamScenario
+import hola.scenarios.Scenario
+import hola.scenarios.SharedScenario
 import kotlin.reflect.KClass
 import kotlin.reflect.full.isSubclassOf
 import kotlin.reflect.full.primaryConstructor
