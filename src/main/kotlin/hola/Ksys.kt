@@ -1,8 +1,8 @@
 package hola
 
-import hola.commands.ListCommand
-import hola.commands.RunCommand
-import hola.commands.ShowCommand
+import hola.commands.*
+import hola.services.DefaultScenarioClassScanner
+import hola.services.ScenarioClassScanner
 import picocli.CommandLine
 import picocli.CommandLine.Command
 
@@ -28,7 +28,8 @@ import picocli.CommandLine.Command
 class Ksys
 
 val defaultServices: Map<Class<*>, () -> Any> = mapOf(
-    ScenarioClassScanner::class.java to { DefaultScenarioClassScanner() }
+    ScenarioClassScanner::class.java to { DefaultScenarioClassScanner() },
+    ListPrinter::class.java to { DefaultListPrinter() }
 )
 
 fun ksys(vararg args: String, providers: Map<Class<*>, () -> Any> = defaultServices): Int {

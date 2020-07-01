@@ -7,15 +7,19 @@ import picocli.CommandLine.Command
 // TODO - Add support for * wildcard
 // TODO - Add support for regex
 @Command(name = "list")
-class ListCommand(scenarioInstantiator: ScenarioInstantiator) : BaseCommand(scenarioInstantiator) {
+class ListCommand(scenarioInstantiator: ScenarioInstantiator, private val printer: ListPrinter) : BaseCommand(scenarioInstantiator) {
     override fun call(): Int {
-        ListPrinter().print(scenariosGrouped)
+        printer.print(scenariosGrouped)
         return 0
     }
 }
 
-class ListPrinter {
-    fun print(allScenarios: Map<String, List<ScenarioInstance>>) {
+interface ListPrinter {
+    fun print(allScenarios: Map<String, List<ScenarioInstance>>)
+}
+
+class DefaultListPrinter : ListPrinter {
+    override fun print(allScenarios: Map<String, List<ScenarioInstance>>) {
         allScenarios.forEach(this::printScenario)
     }
 
