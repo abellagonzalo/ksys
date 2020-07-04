@@ -31,14 +31,17 @@ compileTestKotlin {
 
 mainClassName = 'hola.KsysKt'
 
+// Copy init.gradle to ~/.gradle/init.gradle to make use of '---' syntax
 task ksys(type: JavaExec) {
     group = "Execution"
     description = "Run the main class with JavaExecTask"
     classpath = sourceSets.main.runtimeClasspath
     main = 'hola.MainKt'
-    args += project.gradle.appArgs
+    if (project.hasProperty('project.gradle.appArgs'))
+        args += project.gradle.appArgs
 }
 
 test {
     useJUnitPlatform()
+    testLogging.showStandardStreams = true
 }
