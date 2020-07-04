@@ -14,29 +14,17 @@ object Logging {
 
     private val loggers = hashMapOf<Pair<String, String>, SimpleLogger>()
 
-    private val bannedClasses = listOf(
-        SharedScenario::class.java,
-        Scenario::class.java,
-        ParamScenario::class.java
-    )
-
-    private val myLogger = kotlin.run {
-        val file = File("output/test.log")
-        file.parentFile.mkdirs()
-        file.createNewFile()
-        val stdout = PrintStream(file)
-        SimpleLogger(listOf(System.out, stdout))
-    }
-
     val current: SimpleLogger
         get() {
             val stack = Thread.currentThread().stackTrace
             val element = stack.first {
                 val candidate = Class.forName(it.className).kotlin
-                candidate.isFinal
-                        && candidate.isSubclassOf(SharedScenario::class)
-                        || candidate.isSubclassOf(Scenario::class)
-                        || candidate.isSubclassOf(ParamScenario::class)
+                if (candidate.java.isSynthetic) return@first false
+                val isFinal = candidate.isFinal
+                val isSharedScenario = candidate.isSubclassOf(SharedScenario::class)
+                val isScenario = candidate.isSubclassOf(Scenario::class)
+                val isParamScenario = candidate.isSubclassOf(ParamScenario::class)
+                isFinal && (isSharedScenario || isScenario || isParamScenario)
             }
             val key = element.className to element.methodName
             return loggers[key] ?: throw Exception("Logger $key has not been registered.")
