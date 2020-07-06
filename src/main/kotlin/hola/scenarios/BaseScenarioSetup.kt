@@ -5,7 +5,7 @@ import hola.SimpleLogger
 import java.lang.Exception
 import java.util.*
 
-abstract class BaseScenario {
+abstract class BaseScenarioSetup {
     abstract val id: String
     abstract val description: String
     abstract fun setup()

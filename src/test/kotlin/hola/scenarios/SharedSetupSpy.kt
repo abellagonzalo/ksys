@@ -1,6 +1,6 @@
 package hola.scenarios
 
-open class SharedScenarioSpy : SharedScenario() {
+open class SharedSetupSpy : SharedSetup() {
 
     override val id: String = this::class.simpleName!!.toLowerCase()
 

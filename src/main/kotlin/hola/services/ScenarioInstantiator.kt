@@ -3,7 +3,7 @@ package hola.services
 import hola.*
 import hola.scenarios.ParamScenario
 import hola.scenarios.Scenario
-import hola.scenarios.SharedScenario
+import hola.scenarios.SharedSetup
 import kotlin.reflect.KClass
 import kotlin.reflect.full.isSubclassOf
 import kotlin.reflect.full.primaryConstructor
@@ -43,24 +43,24 @@ class ScenarioInstantiator(private val scanner: ScenarioClassScanner) {
         }
     }
 
-    private fun <T : Any> KClass<T>.createPair(): Pair<T, SharedScenario?> {
+    private fun <T : Any> KClass<T>.createPair(): Pair<T, SharedSetup?> {
         val shared = if (this.isInner) getSharedScenarioFor(this) else null
         val scenario = if (shared == null) this.primaryConstructor!!.call()
         else this.primaryConstructor!!.call(shared)
         return scenario to shared
     }
 
-    private fun getSharedScenarioFor(klass: KClass<*>): SharedScenario? {
+    private fun getSharedScenarioFor(klass: KClass<*>): SharedSetup? {
         val key = klass.java.name.substringBeforeLast('$')
         return sharedScenarios2.getOrPut(key) {
             val a = Class.forName(key).kotlin
             if (!a.isFinal) throw Exception("Outer class of scenario ${klass.qualifiedName} must be final.")
-            if (!a.isSubclassOf(SharedScenario::class)) return null
-            a.primaryConstructor!!.call() as SharedScenario
+            if (!a.isSubclassOf(SharedSetup::class)) return null
+            a.primaryConstructor!!.call() as SharedSetup
         }
     }
 
-    private val sharedScenarios2 = mutableMapOf<String, SharedScenario>()
+    private val sharedScenarios2 = mutableMapOf<String, SharedSetup>()
 }
 
 

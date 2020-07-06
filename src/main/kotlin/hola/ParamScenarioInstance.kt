@@ -1,10 +1,10 @@
 package hola
 
 import hola.scenarios.ParamScenario
-import hola.scenarios.SharedScenario
+import hola.scenarios.SharedSetup
 
-class ParamScenarioInstance(private val index: Int, scenario: ParamScenario, sharedScenario: SharedScenario?) :
-    BaseScenarioInstance<ParamScenario>(scenario, sharedScenario) {
+class ParamScenarioInstance(private val index: Int, scenario: ParamScenario, sharedSetup: SharedSetup?) :
+    BaseScenarioInstance<ParamScenario>(scenario, sharedSetup) {
 
     override val id = scenario.id + "_" + index.toString().padStart(4, '0')
 
@@ -12,7 +12,7 @@ class ParamScenarioInstance(private val index: Int, scenario: ParamScenario, sha
 
     override fun execute() {
         Logging.registerLogger(
-            scenario::class.java.name, "execute", id, sharedScenario?.id
+            scenario::class.java.name, "execute", id, sharedSetup?.id
         ).use {
             exceptionSafe { scenario.executeWithParam(index) }
         }

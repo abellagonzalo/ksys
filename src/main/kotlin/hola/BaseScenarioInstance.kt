@@ -1,19 +1,19 @@
 package hola
 
-import hola.scenarios.BaseScenario
-import hola.scenarios.SharedScenario
+import hola.scenarios.BaseScenarioSetup
+import hola.scenarios.SharedSetup
 
-abstract class BaseScenarioInstance<T : BaseScenario>(
+abstract class BaseScenarioInstance<T : BaseScenarioSetup>(
     val scenario: T,
-    val sharedScenario: SharedScenario?
+    val sharedSetup: SharedSetup?
 ) : ScenarioInstance {
 
     override val sharedId: String
-        get() = sharedScenario?.id ?: id
+        get() = sharedSetup?.id ?: id
 
     override val scenarioDescription: String = scenario.description
 
-    override val sharedScenarioDescription: String? = sharedScenario?.description
+    override val sharedScenarioDescription: String? = sharedSetup?.description
 
     override var exception: Exception? = null
         protected set
@@ -29,35 +29,35 @@ abstract class BaseScenarioInstance<T : BaseScenario>(
     }
 
     override fun sharedSetup() {
-        if (sharedScenario == null) return
+        if (sharedSetup == null) return
         Logging.registerLogger(
-            sharedScenario::class.java.name, sharedScenario::setup.name, null, sharedScenario.id
+            sharedSetup::class.java.name, sharedSetup::setup.name, null, sharedSetup.id
         ).use {
-            exceptionSafe(sharedScenario::setup)
+            exceptionSafe(sharedSetup::setup)
         }
     }
 
     override fun sharedValidate() {
-        if (sharedScenario == null) return
+        if (sharedSetup == null) return
         Logging.registerLogger(
-            sharedScenario::class.java.name, sharedScenario::validate.name, null, sharedScenario.id
+            sharedSetup::class.java.name, sharedSetup::validate.name, null, sharedSetup.id
         ).use {
-            exceptionSafe(sharedScenario::validate)
+            exceptionSafe(sharedSetup::validate)
         }
     }
 
     override fun sharedTeardown() {
-        if (sharedScenario == null) return
+        if (sharedSetup == null) return
         Logging.registerLogger(
-            sharedScenario::class.java.name, sharedScenario::teardown.name, null, sharedScenario.id
+            sharedSetup::class.java.name, sharedSetup::teardown.name, null, sharedSetup.id
         ).use {
-            sharedScenario.teardown()
+            sharedSetup.teardown()
         }
     }
 
     override fun setup() {
         Logging.registerLogger(
-            scenario::class.java.name, scenario::setup.name, id, sharedScenario?.id
+            scenario::class.java.name, scenario::setup.name, id, sharedSetup?.id
         ).use {
             exceptionSafe(scenario::setup)
         }
@@ -65,7 +65,7 @@ abstract class BaseScenarioInstance<T : BaseScenario>(
 
     override fun validate() {
         Logging.registerLogger(
-            scenario::class.java.name, scenario::validate.name, id, sharedScenario?.id
+            scenario::class.java.name, scenario::validate.name, id, sharedSetup?.id
         ).use {
             exceptionSafe(scenario::validate)
         }
@@ -73,7 +73,7 @@ abstract class BaseScenarioInstance<T : BaseScenario>(
 
     override fun teardown() {
         Logging.registerLogger(
-            scenario::class.java.name, scenario::teardown.name, id, sharedScenario?.id
+            scenario::class.java.name, scenario::teardown.name, id, sharedSetup?.id
         ).use {
             scenario.teardown()
         }

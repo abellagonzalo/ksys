@@ -2,7 +2,7 @@ package hola
 
 import hola.scenarios.ParamScenario
 import hola.scenarios.Scenario
-import hola.scenarios.SharedScenario
+import hola.scenarios.SharedSetup
 import java.io.Closeable
 import java.io.File
 import java.io.PrintStream
@@ -21,7 +21,7 @@ object Logging {
                 val candidate = Class.forName(it.className).kotlin
                 if (candidate.java.isSynthetic) return@first false
                 val isFinal = candidate.isFinal
-                val isSharedScenario = candidate.isSubclassOf(SharedScenario::class)
+                val isSharedScenario = candidate.isSubclassOf(SharedSetup::class)
                 val isScenario = candidate.isSubclassOf(Scenario::class)
                 val isParamScenario = candidate.isSubclassOf(ParamScenario::class)
                 isFinal && (isSharedScenario || isScenario || isParamScenario)

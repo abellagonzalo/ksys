@@ -1,10 +1,10 @@
 package hola
 
 import hola.scenarios.Scenario
-import hola.scenarios.SharedScenario
+import hola.scenarios.SharedSetup
 
-class SingleScenarioInstance(scenario: Scenario, sharedScenario: SharedScenario?) :
-    BaseScenarioInstance<Scenario>(scenario, sharedScenario) {
+class SingleScenarioInstance(scenario: Scenario, sharedSetup: SharedSetup?) :
+    BaseScenarioInstance<Scenario>(scenario, sharedSetup) {
 
     override val id = scenario.id
 
@@ -12,7 +12,7 @@ class SingleScenarioInstance(scenario: Scenario, sharedScenario: SharedScenario?
 
     override fun execute() {
         Logging.registerLogger(
-            scenario::class.java.name, scenario::execute.name, id, sharedScenario?.id
+            scenario::class.java.name, scenario::execute.name, id, sharedSetup?.id
         ).use {
             exceptionSafe(scenario::execute)
         }
