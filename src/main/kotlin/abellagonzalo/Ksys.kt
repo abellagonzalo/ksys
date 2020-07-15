@@ -1,8 +1,9 @@
-package hola
+package abellagonzalo
 
-import hola.commands.*
-import hola.services.DefaultScenarioClassScanner
-import hola.services.ScenarioClassScanner
+import abellagonzalo.commands.KsysFactory
+import abellagonzalo.commands.ListCommand
+import abellagonzalo.commands.RunCommand
+import abellagonzalo.commands.ShowCommand
 import picocli.CommandLine
 import picocli.CommandLine.Command
 
@@ -27,11 +28,11 @@ import picocli.CommandLine.Command
 )
 class Ksys
 
-val defaultServices: Map<Class<*>, () -> Any> = mapOf(
-    ScenarioClassScanner::class.java to { DefaultScenarioClassScanner() },
-    ListPrinter::class.java to { DefaultListPrinter() }
-)
+val defaultServices: Map<Class<*>, () -> Any> = mapOf()
 
 fun ksys(vararg args: String, providers: Map<Class<*>, () -> Any> = defaultServices): Int {
-    return CommandLine(Ksys(), KsysFactory(providers)).execute(*args)
+    return CommandLine(
+        Ksys(),
+        KsysFactory(providers)
+    ).execute(*args)
 }
