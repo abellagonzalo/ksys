@@ -1,43 +1,18 @@
 package abellagonzalo.commands
 
 import abellagonzalo.commands.ResultCode.*
+import abellagonzalo.commands.ScenarioPhase.SETUP
+import abellagonzalo.commands.ScenarioPhase.VALIDATE
 import abellagonzalo.events.EventBus
+import abellagonzalo.logging.ScenarioCleaner
+import abellagonzalo.scenarios.ParamScenario1
+import abellagonzalo.scenarios.SingleScenario
+import abellagonzalo.scenarios.SingleSharedSetup
 import picocli.CommandLine.Command
 import picocli.CommandLine.Parameters
 import java.time.Duration
 import java.time.LocalDateTime
 import kotlin.reflect.full.primaryConstructor
-
-interface ScenarioMarker
-
-abstract class CommonBase {
-    abstract val id: String
-    abstract val description: String
-
-    val logger: ScenarioLogger
-        get() = ScenarioLogger.current
-
-    fun clean(action: () -> Unit) {
-        // Should add action on top of the current stack
-        println("Calling clean")
-    }
-}
-
-abstract class SingleScenario : CommonBase(), ScenarioMarker {
-    abstract val setup: () -> Unit
-    abstract val execute: () -> Unit
-    abstract val validate: () -> Unit
-}
-
-data class Params1<T0>(val param0: T0)
-
-abstract class ParamScenario1<T0> : CommonBase(), ScenarioMarker {
-    abstract val parameters: List<Params1<T0>>
-
-    abstract val setup: (T0) -> Unit
-    abstract val execute: (T0) -> Unit
-    abstract val validate: (T0) -> Unit
-}
 
 class SkippedException(message: String) : Exception(message)
 
@@ -57,12 +32,88 @@ interface SharedSetupDelegate {
     fun teardown()
 }
 
+class SingleSharedSetupDelegate(private val sharedSetup: SingleSharedSetup) : SharedSetupDelegate {
+    override val id: String = sharedSetup.id
+
+    override val description: String = sharedSetup.description
+
+    override val parameters: List<*> = emptyList<Unit>()
+
+    override val result: ResultCode
+        get() = TODO("Not yet implemented")
+    override val summary: Map<String, ResultCode>
+        get() = TODO("Not yet implemented")
+    override val exception: Exception?
+        get() = TODO("Not yet implemented")
+
+    override fun setup() {
+        executePhase(SETUP, sharedSetup.setup)
+    }
+
+    override fun validate() {
+        executePhase(VALIDATE, sharedSetup.validate)
+    }
+
+    override fun teardown() {
+        ScenarioCleaner.current.clear()
+    }
+
+    private fun executePhase(phase: ScenarioPhase, fn: () -> Unit) {
+        val startTime = publishStartPhase(phase)
+        try {
+            fn()
+            publishFinishPhase(startTime, phase, PASSED, null)
+        } catch (ex: Exception) {
+            publishFinishPhase(startTime, phase, FAILED, ex)
+        }
+    }
+
+    private fun publishStartPhase(phase: ScenarioPhase): LocalDateTime {
+        val startTime = LocalDateTime.now()
+        EventBus.instance.publish(StartPhaseAnEvent(startTime, id, phase))
+        return startTime
+    }
+
+    private fun publishFinishPhase(
+        startTime: LocalDateTime,
+        phase: ScenarioPhase,
+        result: ResultCode,
+        exception: Exception?
+    ) {
+        val endTime = LocalDateTime.now()
+        EventBus.instance.publish(
+            FinishedPhaseAnEvent(endTime, id, phase, Duration.between(startTime, endTime), result, exception)
+        )
+    }
+}
+
+interface AnEvent {
+    val time: LocalDateTime
+}
+
+data class StartPhaseAnEvent(
+    override val time: LocalDateTime,
+    val id: String,
+    val phase: ScenarioPhase
+) : AnEvent
+
+data class FinishedPhaseAnEvent(
+    override val time: LocalDateTime,
+    val id: String,
+    val phase: ScenarioPhase,
+    val duration: Duration,
+    val result: ResultCode,
+    val exception: Exception?
+) : AnEvent
+
 interface ScenarioDelegate : SharedSetupDelegate {
     fun execute()
 }
 
 
-data class StartScenarioPhaseEvent(
+data class StartPhaseEvent(
+    val executionId: String,
+    val sharedSetupId: String,
     val scenarioId: String,
     val phase: ScenarioPhase,
     val time: LocalDateTime
@@ -98,9 +149,9 @@ abstract class BaseScenarioDelegate : ScenarioDelegate {
         val startTime = LocalDateTime.now()
 
         try {
-            EventBus.instance.publish(
-                StartScenarioPhaseEvent(id, phase, startTime)
-            )
+//            EventBus.instance.publish(
+//                StartPhaseEvent(id, phase, startTime)
+//            )
 
             fn()
 
@@ -134,10 +185,13 @@ class ParamScenario1Delegate<T0>(
 
     override val description: String = scenario.description
 
-    override val parameters: List<*> = with(scenario.parameters[index - 1]) { listOf(param0) }
+    override val parameters: List<*> =
+        with(scenario.parameters[index - 1]) {
+            listOf(param0)
+        }
 
     override fun setup() {
-        executePhase(ScenarioPhase.SETUP) {
+        executePhase(SETUP) {
             scenario.setup(scenario.parameters[index - 1].param0)
         }
     }
@@ -164,7 +218,7 @@ class SingleScenarioDelegate(private val scenario: SingleScenario) : BaseScenari
     override val parameters: List<*> = emptyList<Unit>()
 
     override fun setup() {
-        executePhase(ScenarioPhase.SETUP, scenario.setup)
+        executePhase(SETUP, scenario.setup)
     }
 
     override fun execute() {

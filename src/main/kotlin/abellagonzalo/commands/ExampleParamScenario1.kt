@@ -1,5 +1,8 @@
 package abellagonzalo.commands
 
+import abellagonzalo.scenarios.ParamScenario1
+import abellagonzalo.scenarios.Params1
+
 
 class ExampleParamScenario1 : ParamScenario1<Int>() {
     override val id = "param-scenario1-01"

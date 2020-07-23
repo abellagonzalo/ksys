@@ -1,5 +1,8 @@
 package abellagonzalo.commands
 
+import abellagonzalo.logging.ScenarioLogger
+import abellagonzalo.scenarios.SingleScenario
+
 
 class ExampleSingleScenario : SingleScenario() {
     override val id: String
