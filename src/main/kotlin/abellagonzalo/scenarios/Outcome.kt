@@ -1,3 +1,5 @@
 package abellagonzalo.scenarios
 
-interface SharedSetupMarker
+enum class Outcome {
+    PASSED
+}
