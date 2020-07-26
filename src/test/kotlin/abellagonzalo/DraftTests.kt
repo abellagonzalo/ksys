@@ -39,7 +39,7 @@ class ExecuteSingleScenarioTests {
         assertTrue(executedCalled)
 
         // Publish ended scenario event
-        spyListener.assertEquals(EndScenarioEvent(timeProvider[1], scenario1.id))
+        spyListener.assertEquals(EndScenarioEvent(timeProvider[1], scenario1.id, PASSED))
 
         // Outcome is PASSED
         assertEquals(PASSED, outcome)
