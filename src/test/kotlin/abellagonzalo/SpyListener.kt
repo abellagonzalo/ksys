@@ -6,17 +6,13 @@ import kotlin.reflect.KClass
 class SpyListener {
     private val list = mutableListOf<Any>()
 
-    fun <T: Any> subscription(klass: KClass<T>) : (T) -> Unit {
+    fun <T: Any> subscription(): (T) -> Unit {
         return { list.add(it) }
     }
 
     fun <T: Any> event(klass: KClass<T>, zeroIndex: Int = 0): T {
         return list.filterIsInstance(klass.java)[zeroIndex]
     }
-}
-
-inline fun <reified T : Any> SpyListener.subscription() : (T) -> Unit {
-    return subscription(T::class)
 }
 
 inline fun <reified T : Any> SpyListener.event(zeroIndex: Int = 0): T {

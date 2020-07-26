@@ -9,11 +9,10 @@ import abellagonzalo.scenarios.Scenario
 import abellagonzalo.scenarios.SkipException
 
 class ScenarioExecutor(private val timeProvider: TimeProvider, private val eventBus: EventBus) {
-    fun execute(scenario: Scenario): Outcome {
+    fun execute(scenario: Scenario) {
         publishStart(scenario.id)
         val outcome = executeScenario(scenario)
         publishEnd(scenario.id, outcome)
-        return outcome
     }
 
     private fun publishStart(scenarioId: String) {
