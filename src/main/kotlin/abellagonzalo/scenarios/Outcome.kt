@@ -1,5 +1,5 @@
 package abellagonzalo.scenarios
 
 enum class Outcome {
-    PASSED
+    PASSED, FAILED
 }
