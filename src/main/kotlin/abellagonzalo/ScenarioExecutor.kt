@@ -4,24 +4,31 @@ import abellagonzalo.events.EndScenarioEvent
 import abellagonzalo.events.StartScenarioEvent
 import abellagonzalo.providers.TimeProvider
 import abellagonzalo.scenarios.Outcome
-import abellagonzalo.scenarios.Outcome.FAILED
-import abellagonzalo.scenarios.Outcome.PASSED
+import abellagonzalo.scenarios.Outcome.*
 import abellagonzalo.scenarios.Scenario
-import java.lang.Exception
+import abellagonzalo.scenarios.SkipException
 
 class ScenarioExecutor(private val timeProvider: TimeProvider, private val eventBus: EventBus) {
     fun execute(scenario: Scenario): Outcome {
         publishStart(scenario.id)
-        return try {
-            scenario.execute()
-            publishEnd(scenario.id, PASSED)
-        } catch (ex: Exception) {
-            publishEnd(scenario.id, FAILED)
-        }
+        val outcome = executeScenario(scenario)
+        publishEnd(scenario.id, outcome)
+        return outcome
     }
 
     private fun publishStart(scenarioId: String) {
         eventBus.publish(StartScenarioEvent(timeProvider.now(), scenarioId))
+    }
+
+    private fun executeScenario(scenario: Scenario): Outcome {
+        return try {
+            scenario.execute()
+            PASSED
+        } catch (ex: SkipException) {
+            SKIPPED
+        } catch (ex: Exception) {
+            FAILED
+        }
     }
 
     private fun publishEnd(scenarioId: String, outcome: Outcome): Outcome {
