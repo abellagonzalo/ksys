@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.Duration.ofSeconds
+import java.util.*
 
 class ExecuteSingleScenarioTests {
 
@@ -23,7 +24,7 @@ class ExecuteSingleScenarioTests {
 
     @BeforeEach
     fun beforeEach() {
-        eventBus = EventBusImpl()
+        eventBus = EventBus.create()
         timeProvider = FakeTimeProvider(ofSeconds(1))
         spyListener = SpyListener().apply {
             eventBus.subscribe<StartScenarioEvent>(subscription())
@@ -62,5 +63,16 @@ class ExecuteSingleScenarioTests {
         executor.execute(scenario1)
         spyListener.assertEquals(EndScenarioEvent(timeProvider[1], scenario1.id, SKIPPED))
     }
-}
 
+    @Test
+    fun `Clean scenario`() {
+        val scenario = object : TestScenario() {
+            var cleaningCalled = false
+            override val execute: () -> Unit = {
+                clean { cleaningCalled = true }
+            }
+        }
+        executor.execute(scenario)
+        assertTrue(scenario.cleaningCalled)
+    }
+}

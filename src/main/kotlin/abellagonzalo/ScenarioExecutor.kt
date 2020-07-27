@@ -7,11 +7,16 @@ import abellagonzalo.scenarios.Outcome
 import abellagonzalo.scenarios.Outcome.*
 import abellagonzalo.scenarios.Scenario
 import abellagonzalo.scenarios.SkipException
+import abellagonzalo.teardown.CleanerManager
 
 class ScenarioExecutor(private val timeProvider: TimeProvider, private val eventBus: EventBus) {
+
+    private val cleanerManager = CleanerManager(eventBus)
+
     fun execute(scenario: Scenario) {
         publishStart(scenario.id)
         val outcome = executeScenario(scenario)
+        cleanerManager.emptyStack()
         publishEnd(scenario.id, outcome)
     }
 
