@@ -1,4 +1,4 @@
-package abellagonzalo
+package abellagonzalo.fakes
 
 import org.junit.jupiter.api.Assertions
 import kotlin.reflect.KClass
