@@ -11,6 +11,8 @@ import abellagonzalo.publishers.StartScenarioPublisherImpl
 import abellagonzalo.scenarios.Outcome.*
 import abellagonzalo.scenarios.Scenario
 import abellagonzalo.scenarios.SkipException
+import abellagonzalo.teardown.CleanerManager
+import abellagonzalo.teardown.CleanerManagerImpl
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -18,26 +20,20 @@ import java.time.Duration.ofSeconds
 
 class ExecuteSingleScenarioTests {
 
-    private var eventBus: EventBus = EventBus.create()
-    private var timeProvider: TimeProvider = FakeTimeProvider(ofSeconds(1))
-    private lateinit var startScenarioPublisher: StartScenarioPublisher
+    private val eventBus: EventBus = EventBus.create()
+    private val timeProvider: TimeProvider = FakeTimeProvider(ofSeconds(1))
+    private val cleanerManager: CleanerManager = CleanerManagerImpl(eventBus)
+    private val startScenarioPublisher: StartScenarioPublisher = StartScenarioPublisherImpl(timeProvider, eventBus)
 
-    private lateinit var spyListener: SpyListener
+    private val spyListener: SpyListener = SpyListener().apply {
+        eventBus.subscribe<StartScenarioEvent>(subscription())
+        eventBus.subscribe<EndScenarioEvent>(subscription())
+    }
 
-    private lateinit var executor: ScenarioExecutor
+    private val executor: ScenarioExecutor = ScenarioExecutor(cleanerManager, startScenarioPublisher)
 
     private abstract class TestScenario : Scenario() {
         override val id: String = "Scenario1"
-    }
-
-    @BeforeEach
-    fun beforeEach() {
-        startScenarioPublisher = StartScenarioPublisherImpl(timeProvider, eventBus)
-        spyListener = SpyListener().apply {
-            eventBus.subscribe<StartScenarioEvent>(subscription())
-            eventBus.subscribe<EndScenarioEvent>(subscription())
-        }
-        executor = ScenarioExecutor(eventBus, startScenarioPublisher)
     }
 
     @Test
@@ -46,7 +42,9 @@ class ExecuteSingleScenarioTests {
             var executedCalled = false
                 private set
 
-            override fun execute() = kotlin.run { executedCalled = true }
+            override fun execute() = kotlin.run {
+                clean { executedCalled = true }
+            }
         }
         executor.execute(scenario1)
         assertTrue(scenario1.executedCalled)

@@ -12,20 +12,22 @@ interface Executable {
     fun execute()
 }
 
-class ScenarioExecutor(eventBus: EventBus, startScenarioPublisher: StartScenarioPublisher) :
-    BaseExecutor(eventBus, startScenarioPublisher)
+class ScenarioExecutor(
+    cleanerManager: CleanerManager,
+    startScenarioPublisher: StartScenarioPublisher
+) :
+    BaseExecutor(cleanerManager, startScenarioPublisher)
 
 abstract class BaseExecutor(
-    eventBus: EventBus,
+    private val cleanerManager: CleanerManager,
     private val startScenarioPublisher: StartScenarioPublisher
 ) {
 
-    private val cleanerManager = CleanerManager(eventBus)
-
     fun execute(scenario: Scenario) {
         val endScenario = startScenarioPublisher.publishStart(scenario.id)
+        val scenarioCleaner = cleanerManager.createNew()
         val outcome = executeScenario(scenario)
-        cleanerManager.emptyStack()
+        scenarioCleaner.emptyStack()
         endScenario.publishEnd(outcome)
     }
 
