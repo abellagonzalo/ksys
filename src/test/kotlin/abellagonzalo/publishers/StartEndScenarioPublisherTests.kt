@@ -12,6 +12,7 @@ import abellagonzalo.subscribe
 import org.junit.jupiter.api.Test
 import java.time.Duration.ofSeconds
 
+
 class StartEndScenarioPublisherTests {
 
     private val timeProvider = FakeTimeProvider(ofSeconds(2))
@@ -21,8 +22,7 @@ class StartEndScenarioPublisherTests {
         eventBus.subscribe<EndScenarioEvent>(subscription())
     }
 
-    private val startPublisher: StartScenarioPublisher =
-        StartScenarioPublisherImpl(timeProvider, eventBus)
+    private val startPublisher: StartScenarioPublisher = StartScenarioPublisherImpl(timeProvider, eventBus)
 
     @Test
     fun `Publish scenario execution starts and ends`() {
