@@ -8,7 +8,7 @@ interface EventBus {
         lateinit var current: EventBus
             private set
 
-        fun create(): EventBus {
+        fun createSingleton(): EventBus {
             current = EventBusImpl()
             return current
         }

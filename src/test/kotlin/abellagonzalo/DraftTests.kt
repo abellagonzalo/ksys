@@ -14,23 +14,26 @@ import abellagonzalo.scenarios.SkipException
 import abellagonzalo.teardown.CleanerManager
 import abellagonzalo.teardown.CleanerManagerImpl
 import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.Duration.ofSeconds
 
 class ExecuteSingleScenarioTests {
 
-    private val eventBus: EventBus = EventBus.create()
-    private val timeProvider: TimeProvider = FakeTimeProvider(ofSeconds(1))
-    private val cleanerManager: CleanerManager = CleanerManagerImpl(eventBus)
-    private val startScenarioPublisher: StartScenarioPublisher = StartScenarioPublisherImpl(timeProvider, eventBus)
+    private val ksysFactory = KsysFactory().apply {
+        val eventBus = EventBus.createSingleton()
+        bind<EventBus>().to { eventBus }
+        bind<TimeProvider>().to { FakeTimeProvider(ofSeconds(1)) }
+        bind<CleanerManager>().to<CleanerManagerImpl>()
+        bind<StartScenarioPublisher>().to<StartScenarioPublisherImpl>()
+    }
 
     private val spyListener: SpyListener = SpyListener().apply {
+        val eventBus = ksysFactory.create(EventBus::class.java)
         eventBus.subscribe<StartScenarioEvent>(subscription())
         eventBus.subscribe<EndScenarioEvent>(subscription())
     }
 
-    private val executor: ScenarioExecutor = ScenarioExecutor(cleanerManager, startScenarioPublisher)
+    private val executor: ScenarioExecutor = ksysFactory.create(ScenarioExecutor::class.java)
 
     private abstract class TestScenario : Scenario() {
         override val id: String = "Scenario1"

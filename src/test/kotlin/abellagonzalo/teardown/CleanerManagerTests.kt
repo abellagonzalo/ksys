@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test
 
 class CleanerManagerTests {
 
-    private val eventBus: EventBus = EventBus.create()
+    private val eventBus: EventBus = EventBus.createSingleton()
     private var cleanerManager: CleanerManager = CleanerManagerImpl(eventBus)
 
     @Test

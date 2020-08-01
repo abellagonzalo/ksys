@@ -16,7 +16,7 @@ import java.time.Duration.ofSeconds
 class StartEndScenarioPublisherTests {
 
     private val timeProvider = FakeTimeProvider(ofSeconds(2))
-    private val eventBus = EventBus.create()
+    private val eventBus = EventBus.createSingleton()
     private val spyListener = SpyListener().apply {
         eventBus.subscribe<StartScenarioEvent>(subscription())
         eventBus.subscribe<EndScenarioEvent>(subscription())
