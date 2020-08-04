@@ -4,6 +4,7 @@ import abellagonzalo.EventBus
 import abellagonzalo.events.EndScenarioEvent
 import abellagonzalo.events.StartScenarioEvent
 import abellagonzalo.providers.TimeProvider
+import abellagonzalo.publish
 import abellagonzalo.scenarios.Outcome
 
 class StartScenarioPublisherImpl(

@@ -2,6 +2,7 @@ package abellagonzalo.teardown
 
 import abellagonzalo.EventBus
 import abellagonzalo.events.PushCleanEvent
+import abellagonzalo.publish
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 

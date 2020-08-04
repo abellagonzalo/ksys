@@ -3,9 +3,7 @@ package abellagonzalo
 import abellagonzalo.KsysFactory.Binder
 import picocli.CommandLine
 
-inline fun <reified K : Any?> KsysFactory.bind(): Binder<K> {
-    return bind(K::class.java)
-}
+
 
 class KsysFactory : CommandLine.IFactory {
 
@@ -43,3 +41,7 @@ class KsysFactory : CommandLine.IFactory {
         return cls.getDeclaredConstructor(*constructor.parameterTypes).newInstance(*initargs)
     }
 }
+
+inline fun <reified K : Any?> KsysFactory.bind(): Binder<K> = bind(K::class.java)
+
+inline fun <reified K: Any?> KsysFactory.create(): K = create(K::class.java)

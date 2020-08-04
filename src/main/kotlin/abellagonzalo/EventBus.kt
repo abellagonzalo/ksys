@@ -1,9 +1,9 @@
 package abellagonzalo
 
+import java.io.Closeable
 import kotlin.reflect.KClass
 
 interface EventBus {
-
     companion object {
         lateinit var current: EventBus
             private set
@@ -13,37 +13,14 @@ interface EventBus {
             return current
         }
     }
-
-    fun <T : Any> subscribe(eventType: KClass<out T>, handler: (T) -> Unit)
-    fun <T : Any> unsubscribe(eventType: KClass<out T>, handler: (T) -> Unit)
-    fun <T : Any> publish(event: T)
+    fun <T : Any> publish(kls: KClass<T>, event: T)
+    fun <T : Any> subscribe(kls: KClass<T>, action: (T) -> Unit): Closeable
 }
 
-class EventBusImpl : EventBus {
-    private val receivers = mutableMapOf<KClass<*>, MutableList<Any>>()
-
-    override fun <T : Any> subscribe(eventType: KClass<out T>, handler: (T) -> Unit) {
-        val list = receivers.getOrPut(eventType) { mutableListOf() }
-        list.add(handler)
-    }
-
-    @Suppress("UNCHECKED_CAST")
-    override fun <T : Any> publish(event: T) {
-        for (receiver in receivers[event::class].orEmpty())
-            (receiver as (T) -> Any).invoke(event)
-    }
-
-    override fun <T : Any> unsubscribe(eventType: KClass<out T>, handler: (T) -> Unit) {
-        val list = receivers.remove(eventType)
-        if (list == null || !list.remove(handler))
-            throw Exception("Could not find the handler specified.")
-    }
+inline fun <reified T : Any> EventBus.publish(event: T): Unit {
+    publish(T::class, event)
 }
 
-inline fun <reified T : Any> EventBus.subscribe(noinline handler: (T) -> Unit) {
-    subscribe(T::class, handler)
-}
-
-inline fun <reified T : Any> EventBus.unsubscribe(noinline handler: (T) -> Unit) {
-    unsubscribe(T::class, handler)
+inline fun <reified T : Any> EventBus.subscribe(noinline action: (T) -> Unit): Closeable {
+    return subscribe(T::class, action)
 }

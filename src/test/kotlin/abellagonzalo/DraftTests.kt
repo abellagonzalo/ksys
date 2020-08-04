@@ -27,13 +27,12 @@ class ExecuteSingleScenarioTests {
         bind<StartScenarioPublisher>().to<StartScenarioPublisherImpl>()
     }
 
-    private val spyListener: SpyListener = SpyListener().apply {
-        val eventBus = ksysFactory.create(EventBus::class.java)
+    private val spyListener: SpyListener = ksysFactory.create<SpyListener>().apply {
         eventBus.subscribe<StartScenarioEvent>(subscription())
         eventBus.subscribe<EndScenarioEvent>(subscription())
     }
 
-    private val executor: ScenarioExecutor = ksysFactory.create(ScenarioExecutor::class.java)
+    private val executor: ScenarioExecutor = ksysFactory.create()
 
     private abstract class TestScenario : Scenario() {
         override val id: String = "Scenario1"

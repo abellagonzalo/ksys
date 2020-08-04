@@ -1,9 +1,10 @@
 package abellagonzalo.fakes
 
+import abellagonzalo.EventBus
 import org.junit.jupiter.api.Assertions
 import kotlin.reflect.KClass
 
-class SpyListener {
+class SpyListener(val eventBus: EventBus) {
     private val list = mutableListOf<Any>()
 
     fun <T: Any> subscription(): (T) -> Unit {

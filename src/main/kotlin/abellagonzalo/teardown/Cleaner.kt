@@ -2,6 +2,7 @@ package abellagonzalo.teardown
 
 import abellagonzalo.EventBus
 import abellagonzalo.events.PushCleanEvent
+import abellagonzalo.publish
 
 class Cleaner(private val eventBus: EventBus) {
     companion object {
