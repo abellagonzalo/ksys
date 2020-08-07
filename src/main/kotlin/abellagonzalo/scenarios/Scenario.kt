@@ -3,7 +3,13 @@ package abellagonzalo.scenarios
 import abellagonzalo.Executable
 import abellagonzalo.teardown.Cleaner
 
-data class Tag(val value: String)
+data class Tag(val value: String) {
+    override fun equals(other: Any?): Boolean = when (other) {
+        is String -> value.trim('#') == other.trim('#')
+        is Tag -> equals(other.value)
+        else -> false
+    }
+}
 
 interface Details {
     val id: String

@@ -40,16 +40,14 @@ class ExecuteSingleScenarioTests {
 
     @Test
     fun `PASSED scenario`() {
+        var executedCalled = false
         val scenario1 = object : TestScenario() {
-            var executedCalled = false
-                private set
-
             override fun execute() = kotlin.run {
                 clean { executedCalled = true }
             }
         }
         executor.execute(scenario1)
-        assertTrue(scenario1.executedCalled)
+        assertTrue(executedCalled)
 
         assertEquals(scenario1.id, spyListener.event<StartScenarioEvent>(0).scenarioId)
         assertEquals(scenario1.id, spyListener.event<EndScenarioEvent>(0).scenarioId)
@@ -76,12 +74,12 @@ class ExecuteSingleScenarioTests {
 
     @Test
     fun `Clean scenario`() {
+        var cleaningCalled = false
         val scenario = object : TestScenario() {
-            var cleaningCalled = false
             override fun execute() = clean { cleaningCalled = true }
         }
         executor.execute(scenario)
-        assertTrue(scenario.cleaningCalled)
+        assertTrue(cleaningCalled)
     }
 }
 

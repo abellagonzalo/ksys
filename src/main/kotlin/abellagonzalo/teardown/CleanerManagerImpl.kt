@@ -3,6 +3,7 @@ package abellagonzalo.teardown
 import abellagonzalo.EventBus
 import abellagonzalo.events.PushCleanEvent
 import abellagonzalo.scenarios.Outcome
+import abellagonzalo.scenarios.Outcome.*
 import abellagonzalo.subscribe
 import java.util.*
 
@@ -23,7 +24,7 @@ class CleanerManagerImpl(private val eventBus: EventBus) : CleanerManager {
             while (stack.isNotEmpty())
                 stack.pop().invoke()
             subscription.close()
-            return Outcome.PASSED
+            return PASSED
         }
     }
 }
